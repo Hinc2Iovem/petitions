@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    container_name: petition_app
+    ports:
+      - "8000:8000"
+    environment:
+      - SQL_DB_URL=${SQL_DB_URL}
+    volumes:
+      - ./db:/app/db
+    networks:
+      - petition_network
+
+networks:
+  petition_network:
+    driver: bridge

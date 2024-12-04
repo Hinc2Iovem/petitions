@@ -1,0 +1,8 @@
+venv/
+
+db/
+
+sayatbek.db
+
+.env
+
