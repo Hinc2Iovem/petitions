@@ -17,6 +17,7 @@ class User(UserBase):
 class UserResponse(BaseModel):
     access_token: str
     token_type: str
+    user_id: int
 
     class Config:
         orm_mode = True
@@ -42,6 +43,7 @@ class PetitionResponse(PetitionBase):
 
 class VoteCreate(BaseModel):
     petition_id: int
+    token: str
 
 class VoteResponse(BaseModel):
     id: int
@@ -54,3 +56,14 @@ class VoteResponse(BaseModel):
 
 class TokenRequest(BaseModel):
     token: str
+
+
+class VotedPetitionResponse(BaseModel):
+    id: int
+    title: str
+    description: str
+    created_at: datetime
+    votes_count: int
+
+    class Config:
+        orm_mode = True

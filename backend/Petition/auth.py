@@ -16,6 +16,7 @@ def create_access_token(data: dict, expires_delta: timedelta = timedelta(hours=1
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
     to_encode.update({"exp": expire})
+    to_encode["sub"] = str(to_encode["sub"])  
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -26,8 +27,11 @@ def get_user_from_token(db: Session, token: str):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        if token.startswith("Bearer "):
+            token = token[len("Bearer "):]
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
+        user_id: str = str(payload.get("sub"))  
+
         if user_id is None:
             raise credentials_exception
     except jwt.PyJWTError:

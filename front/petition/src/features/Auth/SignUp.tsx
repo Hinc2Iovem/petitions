@@ -6,8 +6,10 @@ import { FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { axiosCustomized } from "../../api/axios";
 import useUpdateValueAfterTimer from "../hooks/shared/useUpdateValueAfterTimer";
+import useAuth from "../hooks/shared/useAuth";
 
 export default function SignUp() {
+  const { setToken } = useAuth();
   const navigate = useNavigate();
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -33,7 +35,8 @@ export default function SignUp() {
         .then((r) => r.data);
 
       if (res) {
-        sessionStorage.setItem("token", res.access_token);
+        setToken(res.access_token);
+        sessionStorage.setItem("userId", res.user_id);
         navigate("/");
       }
       console.log(res);

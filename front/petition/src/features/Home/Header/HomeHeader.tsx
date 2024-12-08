@@ -1,21 +1,10 @@
-import { useEffect, useState } from "react";
 import { BiEnvelopeOpen, BiLogIn, BiLogOut, BiUserCircle } from "react-icons/bi";
 import { Link } from "react-router-dom";
+import useAuth from "../../hooks/shared/useAuth";
 
 export default function HomeHeader() {
-  const [token, setToken] = useState(sessionStorage.getItem("token") || "");
+  const { token, setToken } = useAuth();
 
-  useEffect(() => {
-    const updateToken = () => {
-      const sessionToken = sessionStorage.getItem("token");
-      setToken(sessionToken || "");
-    };
-
-    window.addEventListener("storage", updateToken);
-    return () => {
-      window.addEventListener("storage", updateToken);
-    };
-  }, []);
   return (
     <header className="w-full px-[1rem] py-[1rem] relative flex justify-between gap-[1rem] items-center">
       <h1 className="text-white text-[2.5rem] cursor-pointer hover:text-text-muted transition-all">ПРЕЗИДЕНТ МИРА</h1>
@@ -32,8 +21,8 @@ export default function HomeHeader() {
           size={30}
           className="cursor-pointer hover:opacity-80 active:scale-[0.97] transition-all"
         />
-        {token ? (
-          <button onClick={() => sessionStorage.removeItem("token")}>
+        {token?.trim().length ? (
+          <button onClick={() => setToken("")}>
             <BiLogOut
               color="white"
               size={30}

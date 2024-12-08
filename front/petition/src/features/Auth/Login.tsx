@@ -6,8 +6,10 @@ import { FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { axiosCustomized } from "../../api/axios";
 import useUpdateValueAfterTimer from "../hooks/shared/useUpdateValueAfterTimer";
+import useAuth from "../hooks/shared/useAuth";
 
 export default function Login() {
+  const { setToken } = useAuth();
   const navigate = useNavigate();
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -26,12 +28,13 @@ export default function Login() {
 
     try {
       const res = await axiosCustomized
-        .post(`/`, {
+        .post(`/token`, {
           username: value,
           password,
         })
         .then((r) => r.data);
-      sessionStorage.setItem("token", res);
+      setToken(res.access_token);
+      sessionStorage.setItem("userId", res.user_id);
       navigate("/");
     } catch (error) {
       console.error(error);

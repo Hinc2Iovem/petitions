@@ -7,7 +7,7 @@ services:
     environment:
       - SQL_DB_URL=${SQL_DB_URL}
     volumes:
-      - ./db:/app/db
+      - ./app
     networks:
       - petition_network
 

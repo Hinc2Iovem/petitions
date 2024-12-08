@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PetitionTypes } from "../../types/PetitionTypes";
 import useGetAllPetitions from "../hooks/useGetAllPetitions";
 import HomeHeader from "./Header/HomeHeader";
 import { BiArrowBack } from "react-icons/bi";
 import PetitionCommentSection from "./PetitionCommentSection";
 import useUpdateValueAfterTimer from "../hooks/shared/useUpdateValueAfterTimer";
+import useAuth from "../hooks/shared/useAuth";
 
 type ExpandPetitionTypes = {
   expand: boolean;
@@ -21,6 +22,7 @@ type ExpandPetitionTypes = {
 
 export default function Home() {
   const petitions = useGetAllPetitions();
+  const [votedPetitions, setVotedPetitions] = useState<PetitionTypes[]>([]);
   const [voted, setVoted] = useState(false);
   const [expandPetition, setExpandPetition] = useState<ExpandPetitionTypes>({
     expand: false,
@@ -35,6 +37,22 @@ export default function Home() {
     votesCount: 0,
   });
 
+  useEffect(() => {
+    fetchVotedPetitions();
+  }, []);
+
+  const fetchVotedPetitions = async () => {
+    const userId = sessionStorage.getItem("userId") || 1;
+    try {
+      const res = await fetch(`http://localhost:8000/petitions/users/${userId}`, {
+        method: "GET",
+      }).then((response) => response.json());
+      setVotedPetitions(res);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   useUpdateValueAfterTimer({ setValue: setVoted, value: voted });
   return (
     <div className="h-full w-full mx-auto realtive">
@@ -43,7 +61,14 @@ export default function Home() {
         <h2 className="text-[1.5rem]">Питиции на расмотрение</h2>
         <ul className="grid grid-cols-[repeat(auto-fill,minmax(30rem,1fr))] gap-[1rem]">
           {petitions?.map((p) => (
-            <PetitionBlock key={p.id} setExpandPetition={setExpandPetition} {...p} />
+            <PetitionBlock
+              key={p.id}
+              setVoted={setVoted}
+              expandPetition={expandPetition}
+              voted={voted}
+              setExpandPetition={setExpandPetition}
+              {...p}
+            />
           ))}
         </ul>
       </div>
@@ -56,6 +81,8 @@ export default function Home() {
       </aside>
       <PetitionBlockExpanded
         setVoted={setVoted}
+        votedPetitions={votedPetitions}
+        setVotedPetitions={setVotedPetitions}
         expandPetition={expandPetition}
         setExpandPetition={setExpandPetition}
       />
@@ -67,9 +94,18 @@ type PetitionBlockExpandedTypes = {
   expandPetition: ExpandPetitionTypes;
   setVoted: React.Dispatch<React.SetStateAction<boolean>>;
   setExpandPetition: React.Dispatch<React.SetStateAction<ExpandPetitionTypes>>;
+  setVotedPetitions: React.Dispatch<React.SetStateAction<PetitionTypes[]>>;
+  votedPetitions: PetitionTypes[];
 };
 
-function PetitionBlockExpanded({ expandPetition, setVoted, setExpandPetition }: PetitionBlockExpandedTypes) {
+function PetitionBlockExpanded({
+  expandPetition,
+  votedPetitions,
+  setVoted,
+  setExpandPetition,
+  setVotedPetitions,
+}: PetitionBlockExpandedTypes) {
+  const { token } = useAuth();
   const resetExpandedPetition = () => {
     setExpandPetition({
       expand: false,
@@ -85,27 +121,35 @@ function PetitionBlockExpanded({ expandPetition, setVoted, setExpandPetition }: 
     });
   };
   const voteForPetition = async () => {
-    const token = sessionStorage.getItem("token");
-
     try {
-      await fetch(`http://localhost:8000/votes/?token=${token}`, {
+      await fetch(`http://localhost:8000/votes/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ petition_id: expandPetition.id }),
+        body: JSON.stringify({ petition_id: expandPetition.id, token }),
       })
         .then((response) => response.json())
         .then((data) => {
           console.log("Vote created:", data);
         });
+      setVotedPetitions((prev) => [
+        ...prev,
+        {
+          id: expandPetition.id,
+          created_at: new Date(),
+          description: expandPetition.description,
+          title: expandPetition.title,
+          votes_count: expandPetition.votesCount,
+        },
+      ]);
       setVoted(true);
-      resetExpandedPetition();
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
+  const notAllowedToVote = votedPetitions.some((v) => v.id === expandPetition.id) || !token.trim().length;
   return (
     <div className={`${expandPetition.expand ? "" : "hidden"} flex flex-col gap-[1rem] p-[2rem] relative`}>
       <button onClick={resetExpandedPetition}>
@@ -122,7 +166,10 @@ function PetitionBlockExpanded({ expandPetition, setVoted, setExpandPetition }: 
 
       <button
         onClick={voteForPetition}
-        className="w-fit hover:bg-active hover:text-white active:scale-[0.99] transition-all bg-white text-primary px-[2rem] py-[.5rem] rounded-md shadow-sm mt-[2rem] text-[1.5rem] font-medium self-end"
+        disabled={notAllowedToVote}
+        className={`${
+          notAllowedToVote ? "cursor-not-allowed" : ""
+        } w-fit hover:bg-active hover:text-white active:scale-[0.99] transition-all bg-white text-primary px-[2rem] py-[.5rem] rounded-md shadow-sm mt-[2rem] text-[1.5rem] font-medium self-end`}
       >
         ЛЕТСГОУ
       </button>
@@ -133,16 +180,53 @@ function PetitionBlockExpanded({ expandPetition, setVoted, setExpandPetition }: 
 }
 
 type PetitionBlockTypes = {
+  setVoted: React.Dispatch<React.SetStateAction<boolean>>;
   setExpandPetition: React.Dispatch<React.SetStateAction<ExpandPetitionTypes>>;
+  expandPetition: ExpandPetitionTypes;
+  voted: boolean;
 } & PetitionTypes;
 
-function PetitionBlock({ created_at, description, id, title, votes_count, setExpandPetition }: PetitionBlockTypes) {
+function PetitionBlock({
+  created_at,
+  description,
+  id,
+  title,
+  expandPetition,
+  voted,
+  votes_count,
+  setVoted,
+  setExpandPetition,
+}: PetitionBlockTypes) {
+  const [currentVotesCount, setCurrentVotesCount] = useState(votes_count);
   const date = new Date(created_at).toISOString().split("-");
   const refinedDate = {
     year: (date || [])[0],
     month: (date || [])[1],
     day: (date || [])[2].slice(0, 2),
   };
+
+  const resetExpandedPetition = () => {
+    setExpandPetition({
+      expand: false,
+      id: 0,
+      title: "",
+      description: "",
+      createdAt: {
+        day: "",
+        month: "",
+        year: "",
+      },
+      votesCount: 0,
+    });
+    setVoted(false);
+  };
+
+  useEffect(() => {
+    if (expandPetition.id === id && voted) {
+      setCurrentVotesCount((prev) => prev + 1);
+      resetExpandedPetition();
+    }
+  }, [voted, expandPetition, id]);
 
   return (
     <div
@@ -161,7 +245,7 @@ function PetitionBlock({ created_at, description, id, title, votes_count, setExp
       <h3 className="text-[1.5rem] text-ellipsis capitalize">{title}</h3>
       <p className="text-text-muted text-[1.2rem] text-ellipsis">{description}</p>
       <div className="flex justify-between gap-[1rem] mt-[1rem] text-[1.2rem]">
-        <p>Количество Голосов: {votes_count}</p>
+        <p>Количество Голосов: {currentVotesCount}</p>
         <p className="mt-[.5rem] text-[1.1rem] text-text-muted">
           {refinedDate.day}-{refinedDate.month}-{refinedDate.year}
         </p>
