@@ -122,17 +122,6 @@ function PetitionBlockExpanded({
   };
   const voteForPetition = async () => {
     try {
-      await fetch(`http://localhost:8000/votes/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ petition_id: expandPetition.id, token }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Vote created:", data);
-        });
       setVotedPetitions((prev) => [
         ...prev,
         {
@@ -144,12 +133,28 @@ function PetitionBlockExpanded({
         },
       ]);
       setVoted(true);
+
+      await fetch(`http://localhost:8000/votes/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ petition_id: expandPetition.id, token }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Vote created:", data);
+        });
+
+      console.log("token: ", token);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   const notAllowedToVote = votedPetitions.some((v) => v.id === expandPetition.id) || !token.trim().length;
+  console.log("token: ", token);
+
   return (
     <div className={`${expandPetition.expand ? "" : "hidden"} flex flex-col gap-[1rem] p-[2rem] relative`}>
       <button onClick={resetExpandedPetition}>

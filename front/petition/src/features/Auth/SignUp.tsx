@@ -36,6 +36,7 @@ export default function SignUp() {
 
       if (res) {
         setToken(res.access_token);
+        sessionStorage.setItem("access_token", res.access_token);
         sessionStorage.setItem("userId", res.user_id);
         navigate("/");
       }

@@ -34,6 +34,7 @@ export default function Login() {
         })
         .then((r) => r.data);
       setToken(res.access_token);
+      sessionStorage.setItem("access_token", res.access_token);
       sessionStorage.setItem("userId", res.user_id);
       navigate("/");
     } catch (error) {

@@ -94,7 +94,6 @@ async def create_petition(petition: PetitionCreate, db: Session = Depends(get_db
 @app.post("/votes/", response_model=VoteResponse)
 async def create_vote(
         vote: VoteCreate,
-        token_request: TokenRequest,
         db: Session = Depends(get_db),
 ):
     token = vote.token

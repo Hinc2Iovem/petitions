@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 type AuthContextTypes = {
   token: string;
@@ -13,5 +13,11 @@ type AuthProviderTypes = {
 export default function AuthProvider({ children }: AuthProviderTypes) {
   const [token, setToken] = useState("");
 
+  useEffect(() => {
+    const token = sessionStorage.getItem("access_token");
+    if (token) {
+      setToken(token);
+    }
+  }, []);
   return <AuthContext.Provider value={{ token, setToken }}>{children}</AuthContext.Provider>;
 }
