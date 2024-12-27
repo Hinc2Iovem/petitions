@@ -85,8 +85,8 @@ async def create_petition(petition: PetitionCreate, db: Session = Depends(get_db
 @app.post("/votes/", response_model=VoteResponse)
 async def create_vote(
         vote: VoteCreate,
+        token_request: TokenRequest,
         db: Session = Depends(get_db),
-        token_request: TokenRequest = Depends()
 ):
     token = token_request.token
     current_user = get_user_from_token(db, token)
@@ -114,7 +114,7 @@ async def create_vote(
 @app.get("/petitions/", response_model=List[PetitionResponse])
 async def get_petitions(
         skip: int = Query(0, alias="page", ge=0),
-        limit: int = Query(2, le=100),
+        limit: int = Query(15, le=100),
         search: str = Query(None, max_length=50),
         sort_by: str = Query("created_at", regex="^(created_at|votes_count)$"),
         sort_order: str = Query("desc", regex="^(asc|desc)$"),
