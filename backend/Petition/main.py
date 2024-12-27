@@ -126,8 +126,8 @@ async def get_petitions(
         skip: int = Query(0, alias="page", ge=0),
         limit: int = Query(15, le=100),
         search: str = Query(None, max_length=50),
-        sort_by: str = Query("created_at", regex="^(created_at|votes_count)$"),
-        sort_order: str = Query("desc", regex="^(asc|desc)$"),
+        sort_by: str = Query("created_at", pattern="^(created_at|votes_count)$"),
+        sort_order: str = Query("desc", pattern="^(asc|desc)$"),
         db: Session = Depends(get_db)
 ):
     query = db.query(Petition)

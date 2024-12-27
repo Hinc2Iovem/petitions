@@ -12,7 +12,7 @@ class User(UserBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserResponse(BaseModel):
     access_token: str
@@ -20,7 +20,7 @@ class UserResponse(BaseModel):
     user_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class LoginRequest(BaseModel):
     username: str
@@ -39,7 +39,7 @@ class PetitionResponse(PetitionBase):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class VoteCreate(BaseModel):
     petition_id: int
@@ -52,7 +52,7 @@ class VoteResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TokenRequest(BaseModel):
     token: str
@@ -66,4 +66,4 @@ class VotedPetitionResponse(BaseModel):
     votes_count: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
