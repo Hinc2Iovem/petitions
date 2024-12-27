@@ -37,10 +37,10 @@ function PetitionBlockExpandedForm() {
           value={value}
           placeholder="I DON'T LIKE IT"
           onChange={(e) => setValue(e.target.value)}
-          className="bg-inherit border-[.1rem] border-border rounded-md w-full px-[1rem] py-[.5rem] text-[1.4rem]"
+          className="bg-inherit border-[.1rem] text-text border-border rounded-md w-full px-[1rem] py-[.5rem] text-[1.4rem]"
         />
-        <button className="px-[1rem] py-[.5rem] rounded-md shadow-sm shadow-text-muted active:scale-[0.98] hover:scale-[1.01]">
-          Gaaa
+        <button className="px-[1rem] py-[.5rem] text-[1.2rem] rounded-md shadow-sm shadow-text-muted text-text active:scale-[0.98] hover:scale-[1.01]">
+          Отправить
         </button>
       </div>
     </form>

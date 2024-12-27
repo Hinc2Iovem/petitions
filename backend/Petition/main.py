@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from models import Base, User, Petition, Vote
 from database import engine, session_local, get_db
 from schemas import (UserCreate, PetitionCreate, PetitionResponse, VoteCreate, UserResponse, VoteResponse, LoginRequest,
-                     TokenRequest, VotedPetitionResponse)
+                     TokenRequest, VotedPetitionResponse, PersonalPetitionResponse)
 from auth import create_access_token, get_current_user, get_user_from_token
 from typing import List
 

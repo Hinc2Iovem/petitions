@@ -15,7 +15,7 @@ export default function AuthProvider({ children }: AuthProviderTypes) {
 
   useEffect(() => {
     const token = sessionStorage.getItem("access_token");
-    if (token) {
+    if (token?.trim().length) {
       setToken(token);
     }
   }, []);

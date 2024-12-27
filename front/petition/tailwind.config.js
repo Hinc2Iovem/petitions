@@ -4,12 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#09090b",
-        secondary: "#18181a",
-        active: "#272729",
-        "text-muted": "#9e9ea5",
-        text: "white",
-        border: "#1c1b1e",
+        primary: "var(--primary)",
+        secondary: "var(--secondary)",
+        active: "var(--active)",
+        "text-muted": "var(--text-muted)",
+        text: "var(--text)",
+        border: "var(--border)",
       },
     },
   },

@@ -13,6 +13,24 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.dark {
+  --primary: #09090b;
+  --secondary: #18181a;
+  --active: #272729;
+  --text-muted: #9e9ea5;
+  --border: #1c1b1e;
+  --text: white;
+}
+
+.light {
+  --primary: #fdfcfc;
+  --secondary: #cdccad;
+  --active: #a6b98d;
+  --text-muted: #9e9ea5;
+  --border: #1c1b1e;
+  --text: black;
+}
+
 *,
 *::after,
 *::before {

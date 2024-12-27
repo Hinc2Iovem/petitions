@@ -67,3 +67,13 @@ class VotedPetitionResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class PersonalPetitionResponse(BaseModel):
+    id: int
+    title: str
+    description: str
+    created_at: datetime
+    votes_count: int
+
+    class Config:
+        from_attributes = True        

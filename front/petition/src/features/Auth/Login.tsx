@@ -7,9 +7,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { axiosCustomized } from "../../api/axios";
 import useUpdateValueAfterTimer from "../hooks/shared/useUpdateValueAfterTimer";
 import useAuth from "../hooks/shared/useAuth";
+import useTheme from "../../hooks/shared/useTheme";
 
 export default function Login() {
   const { setToken } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -53,20 +55,20 @@ export default function Login() {
   return (
     <section className="w-full h-full flex items-center relative">
       <Link className="absolute top-0 hover:opacity-80 transition-all" to={"/"}>
-        <BiArrowBack size={30} />
+        <BiArrowBack fill={theme === "dark" ? "white" : "black"} size={30} />
       </Link>
       <form
         onSubmit={handleSubmit}
-        className="mx-auto border-border border-[.2rem] rounded-md p-[1rem] flex flex-col gap-[1rem]"
+        className="mx-auto border-border border-[.1rem] rounded-md p-[1rem] flex flex-col gap-[1rem]"
       >
-        <h1 className="mb-[1rem] text-[2rem] underline self-end">Гос Дэп</h1>
+        <h1 className="mb-[1rem] text-[2rem] text-text underline self-end">Логин</h1>
         {isError ? <p className="text-[1.2rem] text-red-500">{errorMessage}</p> : null}
         <input
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Введите ваше имя"
-          className="bg-inherit px-[1rem] py-[.5rem] rounded-md text-[1.4rem] border-border border-[1px]"
+          className="bg-inherit px-[1rem] py-[.5rem] rounded-md text-[1.4rem] text-text border-border border-[1px]"
         />
         <div className="relative">
           <input
@@ -74,7 +76,7 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Пароль"
-            className="bg-inherit px-[1rem] pr-[2.5rem] py-[.5rem] rounded-md text-[1.4rem] border-border border-[1px]"
+            className="bg-inherit px-[1rem] pr-[2.5rem] py-[.5rem] rounded-md text-[1.4rem] text-text border-border border-[1px]"
           />
           <button
             type="button"
@@ -82,12 +84,12 @@ export default function Login() {
             className="absolute right-[.5rem] top-1/2 -translate-y-1/2"
           >
             <BsEyeFill
-              color={"white"}
+              fill={theme === "dark" ? "white" : "black"}
               size={18}
               className={`${showPassword ? "" : "hidden"} hover:opacity-80 transition-all`}
             />
             <FaEyeSlash
-              color={"white"}
+              fill={theme === "dark" ? "white" : "black"}
               size={18}
               className={`${showPassword ? "hidden" : ""} hover:opacity-80 transition-all`}
             />
@@ -98,15 +100,15 @@ export default function Login() {
           disabled={isError}
           className={`${
             isError ? "cursor-not-allowed" : ""
-          } text-[1.5rem] hover:bg-active transition-all mt-[.5rem] rounded-md border-border border-[.1rem] py-[.5rem] w-fit self-end px-[2rem]`}
+          } text-[1.5rem] text-text hover:bg-active transition-all mt-[.5rem] rounded-md border-border border-[.1rem] py-[.5rem] w-fit self-end px-[2rem]`}
         >
-          ЗАПУСК
+          Войти
         </button>
 
         <p className="text-text-muted text-[1.1rem]">
-          no account??{" "}
-          <span className="hover:text-white">
-            <Link to={"/auth/register"}>click</Link>
+          Нету аккаунта??{" "}
+          <span className="hover:text-text">
+            <Link to={"/auth/register"}>Создать</Link>
           </span>
         </p>
       </form>

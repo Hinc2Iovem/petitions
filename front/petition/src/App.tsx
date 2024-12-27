@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "./features/Home/Home";
-import HomeLayout from "./layouts/HomeLayout";
 import Missing from "./components/staticPages/Missing";
-import AuthLayout from "./layouts/AuthLayout";
 import Login from "./features/Auth/Login";
 import SignUp from "./features/Auth/SignUp";
+import Home from "./features/Home/Home";
 import NewPetitionPage from "./features/Home/NewPetition/NewPetitionPage";
+import AuthLayout from "./layouts/AuthLayout";
+import HomeLayout from "./layouts/HomeLayout";
 
 export default function App() {
   return (

@@ -13,7 +13,7 @@ export default function useUpdateValueAfterTimer({ setValue, value }: UpdateValu
       setSeconds(5);
       const interval = setInterval(() => {
         setSeconds((prev) => prev - 1);
-      }, 1000);
+      }, 3000);
 
       return () => clearInterval(interval);
     }
